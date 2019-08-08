@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Text, TouchableOpacity} from 'react-native'
+import {View, Text, Image, TouchableOpacity} from 'react-native'
 import ViewMoreText from 'react-native-view-more-text';
 import renderIf from './renderif';
 import Emoji from './Emoji';
@@ -7,6 +7,7 @@ import { AirbnbRating} from 'react-native-ratings';
 import DatePicker from 'react-native-datepicker';
 import PropTypes from 'prop-types';
 import styles from './Styles';
+// import { Image } from 'expo';
 
 class MessageRowComponent extends Component {
     constructor(props) {
@@ -115,6 +116,14 @@ class MessageRowComponent extends Component {
                             />
                         </View>
                     )
+                }
+                {
+                     renderIf(this.props.type == "image")(
+                        <View>
+                            {/* <Text>{this.props.text}</Text> */}
+                            <Image source={{ isStatic: true, uri: this.props.text }} style={{ width: 150, height: 150 }} />
+                        </View>
+                     )
                 }
                 {/* {
                 renderIf(this.props.type == "Date" && this.props.from == "MAX")(

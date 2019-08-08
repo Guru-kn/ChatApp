@@ -53,9 +53,22 @@ class ChatScreenComponent extends Component {
                                         renderItemActionHandler={this.renderItemActionHandler}
                                         onOptionSelection={this.onOptionSelection}
                                         messages= {this.state.messages}/>
-                <MessageFormComponent OnInputSubmit={this.OnInputSubmit}/>
+                <MessageFormComponent OnInputSubmit={this.OnInputSubmit}
+                                        TakePicture={this.TakePicture}/>
             </View>
         )
+    }
+
+    
+    TakePicture = (picture) => {
+        chatService.setPicture(picture)
+        var messages = chatService.getMaxMessageForPicture();
+        messages.forEach((message) => {
+            this.currentMessageId++
+            message.messageId = this.currentMessageId
+            this.messages.push(message)
+        });
+        this.setState({messages: [...this.messages]})
     }
 
     OnInputSubmit = (userMessage) => {

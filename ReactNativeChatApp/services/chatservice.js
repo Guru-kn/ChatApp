@@ -1,6 +1,7 @@
 class ChatService{
     constructor(){
 
+        this.lastPicture = null
         this.typeListCheckedBeforeSend = ["radio", "rating", "feedback"]
         this.toBeCheckedBeforeSend = false
     }
@@ -135,9 +136,28 @@ class ChatService{
             return message
     }
 
+
+
     getToBeCheckedBeforeSendingValue = () => {
         return this.toBeCheckedBeforeSend;
     }
+
+    
+    setPicture = (picture) => {
+        this.lastPicture = picture;
+    }
+    
+    getPicture = () => {
+        return this.lastPicture;
+    }
+
+    getMaxMessageForPicture = () => {
+        var messages = []
+        messages.push({text: this.lastPicture, from: "MAX", type: "image", options: [], messageId: 0})
+
+        return messages
+    }
+
 }
 
 const chatService = new ChatService();
