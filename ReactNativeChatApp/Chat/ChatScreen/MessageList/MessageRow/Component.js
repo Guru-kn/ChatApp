@@ -5,8 +5,8 @@ import renderIf from './renderif';
 import Emoji from './Emoji';
 import { AirbnbRating} from 'react-native-ratings';
 import DatePicker from 'react-native-datepicker';
-import PropTypes from 'prop-types'
-import styles from './Styles'
+import PropTypes from 'prop-types';
+import styles from './Styles';
 
 class MessageRowComponent extends Component {
     constructor(props) {
@@ -178,11 +178,11 @@ class MessageRowComponent extends Component {
 }
 
 MessageRowComponent.propTypes = {
-    text: PropTypes.string.isRequired,
+    text: PropTypes.string,
     from: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
-    options: PropTypes.array.isRequired,
-    messageId: PropTypes.number.isRequired,
+    options: PropTypes.array,
+    messageId: PropTypes.number,
 }
 
 export default MessageRowComponent;

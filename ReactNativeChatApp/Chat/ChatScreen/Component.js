@@ -49,8 +49,9 @@ class ChatScreenComponent extends Component {
     render(){
         return(
             <View style={styles.MainContainer}>
-                <MessageListComponent onOptionSelection={this.onOptionSelection}
+                <MessageListComponent 
                                         renderItemActionHandler={this.renderItemActionHandler}
+                                        onOptionSelection={this.onOptionSelection}
                                         messages= {this.state.messages}/>
                 <MessageFormComponent OnInputSubmit={this.OnInputSubmit}/>
             </View>
@@ -83,23 +84,23 @@ class ChatScreenComponent extends Component {
                 alert("Please select one of the options first.")
             }
         }
+    }
 
-        onOptionSelection = (option) => {
-            this.toBeCheckedBeforeSend = false
-            if (option != "No" && option != "Yes")
-            {
-                this.userInputMessage = option
-                this.sendMessage()
-            }
-
-            this.selectedOption = option
-        }
-
-        renderItemActionHandler = (eventMessage) => {
-            this.toBeCheckedBeforeSend = false
-            this.userInputMessage = eventMessage
+    onOptionSelection = (option) => {
+        this.toBeCheckedBeforeSend = false
+        if (option != "No" && option != "Yes")
+        {
+            this.userInputMessage = option
             this.sendMessage()
         }
+
+        this.selectedOption = option
+    }
+
+    renderItemActionHandler = (eventMessage) => {
+        this.toBeCheckedBeforeSend = false
+        this.userInputMessage = eventMessage
+        this.sendMessage()
     }
 }
 
