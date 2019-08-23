@@ -4,8 +4,11 @@ import styles from './Styles'
 import MessageListComponent from './MessageList/Component'
 import MessageFormComponent from './MessageForm/Component'
 import chatService from "./../../services/chatservice"
+import ThemeContext from './../../Themes/ThemeContext'
+import ChatThemeConstants from './../../Themes/ChatThemeConstants'
+import Dialog, { DialogFooter, DialogButton, DialogContent } from 'react-native-popup-dialog';
 
-class ChatScreenComponent extends Component { 
+class ChatScreen extends Component { 
 
     constructor() {
         super ();
@@ -16,11 +19,18 @@ class ChatScreenComponent extends Component {
         this.selectedOption = null
         this.messages = []
         this.state = {
+            modalVisible: false,
             messages: []
         }
     }
 
-    componentDidMount() {
+    static navigationOptions = ({ screenProps }) => {
+        return {
+            headerStyle: { backgroundColor: ChatThemeConstants[screenProps.theme].header.backgroundColor}
+        }
+    }
+
+    componentWillMount() {
         var messages = chatService.getInitialDefaultMaxMessages()
         messages.forEach((message) => {
             this.currentMessageId++
@@ -48,14 +58,44 @@ class ChatScreenComponent extends Component {
 
     render(){
         return(
-            <View style={styles.MainContainer}>
-                <MessageListComponent 
-                                        renderItemActionHandler={this.renderItemActionHandler}
-                                        onOptionSelection={this.onOptionSelection}
-                                        messages= {this.state.messages}/>
-                <MessageFormComponent OnInputSubmit={this.OnInputSubmit}
-                                        TakePicture={this.TakePicture}/>
-            </View>
+            <ThemeContext.Consumer>
+                {({ theme }) => (
+                        <View style={[styles.MainContainer, {backgroundColor: ChatThemeConstants[theme].page.backgroundColor}]}>
+                            <Dialog height = {100} width = {380}
+                                visible={this.state.modalVisible}
+                                footer={
+                                <DialogFooter>
+                                    <DialogButton
+                                    text="No"
+                                    onPress={() => { this.setState({modalVisible: false})}}
+                                    />
+                                    <DialogButton
+                                    text="Yes"
+                                    onPress={() => {
+                                                        this.onPreviousContextConfirmationIgnore()
+                                                        this.setState({modalVisible: false})}
+                                                    }
+                                    />
+                                </DialogFooter>
+                                }
+                            >
+                                <DialogContent>
+                                    <View>
+                                        <Text>You have an option to be selected in previous context. Are you sure you do not want to select.</Text>
+                                    </View>
+                                </DialogContent>
+                            </Dialog>
+                            <MessageListComponent 
+                                                    renderItemActionHandler={this.renderItemActionHandler}
+                                                    onOptionSelection={this.onOptionSelection}
+                                                    onDateSelection={this.onDateSelection}
+                                                    messages= {this.state.messages}/>
+                            <MessageFormComponent OnInputSubmit={this.OnInputSubmit}
+                                                    TakePicture={this.TakePicture}/>
+                        </View>
+                
+                )}
+            </ThemeContext.Consumer>
         )
     }
 
@@ -71,14 +111,26 @@ class ChatScreenComponent extends Component {
         this.setState({messages: [...this.messages]})
     }
 
+    onDateSelection = (date) => {
+        chatService.setDate(date)
+        var messages = chatService.getMaxMessageForDate();
+        messages.forEach((message) => {
+            this.currentMessageId++
+            message.messageId = this.currentMessageId
+            this.messages.push(message)
+        });
+        this.setState({messages: [...this.messages]})
+    }
+
     OnInputSubmit = (userMessage) => {
+        
+        this.userInputMessage = userMessage
         if (this.toBeCheckedBeforeSend === false)
         {
             if (userMessage != "")
             {
                 if (this.selectedOption != "Yes")
                 {
-                    this.userInputMessage = userMessage
                     this.currentMessageId++
                     var messageId = this.currentMessageId
                     this.messages.push({text: userMessage, from: "User", type: "", options: [], messageId: messageId})
@@ -92,11 +144,22 @@ class ChatScreenComponent extends Component {
                     this.selectedOption = ""
                 }
             }
-            else
-            {
-                alert("Please select one of the options first.")
-            }
+        } 
+        else
+        {
+            this.setState({ modalVisible: true })
         }
+    }
+
+    onPreviousContextConfirmationIgnore = () => {
+        var lastMessage = this.messages.slice(-1).pop()
+        lastMessage.messageId = 0
+        this.toBeCheckedBeforeSend = false
+        this.currentMessageId++
+        var messageId = this.currentMessageId
+        this.messages.push({text: this.userInputMessage, from: "user", type: '', options: [], messageId: messageId})
+        this.setState({ messages: [...this.messages] })
+        this.sendMessage()
     }
 
     onOptionSelection = (option) => {
@@ -117,4 +180,4 @@ class ChatScreenComponent extends Component {
     }
 }
 
-export default ChatScreenComponent;
+export default ChatScreen;

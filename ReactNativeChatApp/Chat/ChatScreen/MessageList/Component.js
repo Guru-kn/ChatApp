@@ -3,13 +3,17 @@ import {View, FlatList} from 'react-native'
 import PropTypes from 'prop-types'
 import styles from './Styles'
 import MessageRowComponent from './MessageRow/Component'
+import { Dimensions } from 'react-native';
+
+const height = Dimensions.get('window').height;
+const messageListHeight = height - 150
 
 class MessageListComponent extends Component { 
 
     render(){
         return(
             <View style={styles.messageCompleteStyle}>
-                <FlatList style={styles.messageDisplayStyle} 
+                <FlatList style={[styles.messageDisplayStyle, {height: messageListHeight}]} 
                     ref = {(ref) => {this.flatList = ref; }}
                     data={this.props.messages} 
                     extraData= {this.props.messages}
@@ -34,8 +38,13 @@ class MessageListComponent extends Component {
     renderItem = ({item}) => {
             return <MessageRowComponent  onOptionSelectionChanged={this.onOptionSelection}
                                             action={this.renderItemActionHandler}
+                                            onDateSelection={this.onDateSelection}
                                             type={item.type} from={item.from} text={item.text}
                                             messageId={item.messageId} options={item.options}/>
+    }
+
+    onDateSelection = (date) => {
+        this.props.onDateSelection(date);
     }
 
     OnMessageListChange =() => {

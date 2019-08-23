@@ -1,19 +1,20 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Chat from './Chat';
-import ChatScreenComponent from './Chat/ChatScreen/Component';
+import React, {Component} from 'react'
+import Root from './Root';
+import store from './store/store' // Import from store
+import { Provider } from 'react-redux'
+import { MenuProvider } from 'react-native-popup-menu'
 
-export default function App() {
-  return (
-    <ChatScreenComponent />
-  );
+export default class App extends Component {
+
+  render() {
+    return (
+      <Provider store={store}>
+          <MenuProvider>
+            <Root />
+          </MenuProvider>  
+        </Provider>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

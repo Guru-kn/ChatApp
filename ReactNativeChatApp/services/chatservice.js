@@ -4,6 +4,7 @@ class ChatService{
         this.lastPicture = null
         this.typeListCheckedBeforeSend = ["radio", "rating", "feedback"]
         this.toBeCheckedBeforeSend = false
+        this.lastSentDate = null
     }
 
     getInitialDefaultMaxMessages = () => {
@@ -40,6 +41,10 @@ class ChatService{
         else if (responseMessage.type === "rating")
         {
             messages.push({text: responseMessage.outputMessage, from: "MAX", type: "rating", options: [], messageId: 0})
+        }
+        else if (responseMessage.type === "Date")
+        {
+            messages.push({text: responseMessage.outputMessage, from: "User", type: "Date", options: [], messageId: 0})
         }
         else
         {
@@ -131,6 +136,11 @@ class ChatService{
                     type: "",
                     outputMessage: "Sorry for the inconvenience, could you please tell us what went wrong"
                 };
+            }else if ((userInputMessage.includes("Date") || userInputMessage.includes("date")))
+            {
+                message = {
+                    type: "Date" 
+                 };
             }
 
             return message
@@ -141,14 +151,21 @@ class ChatService{
     getToBeCheckedBeforeSendingValue = () => {
         return this.toBeCheckedBeforeSend;
     }
-
-    
+ 
     setPicture = (picture) => {
         this.lastPicture = picture;
     }
-    
-    getPicture = () => {
-        return this.lastPicture;
+
+    setDate = (date) => {
+        this.lastSentDate = date;
+    }
+
+    getMaxMessageForDate = () => {
+        var messages = []
+        var completeText = "Your appointment is booked on: " + this.lastSentDate
+        messages.push({text: completeText, from: "MAX", type: "", options: [], messageId: 0})
+
+        return messages
     }
 
     getMaxMessageForPicture = () => {
